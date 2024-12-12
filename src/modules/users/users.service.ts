@@ -20,12 +20,12 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  findOne(id: mongoose.Types.ObjectId) {
+  findOne(id: mongoose.Types.ObjectId): Promise<User> {
     return this.userModel.findOne({ _id: id })
   }
 
   update(id: mongoose.Types.ObjectId, updateUserDto: UpdateUserDto) {
-    return this.userModel.updateOne({ _id: id, ...updateUserDto });
+    return this.userModel.updateOne({ _id: id }, updateUserDto);
   }
 
   remove(id: mongoose.Types.ObjectId) {
