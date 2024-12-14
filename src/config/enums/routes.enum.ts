@@ -3,4 +3,5 @@ export enum Routes {
     users = base + 'users', 
     tasks = base + 'tasks',
     categories = base + 'categories',
+    auth = base + 'auth',
 }
