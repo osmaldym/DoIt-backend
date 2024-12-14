@@ -3,25 +3,30 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
-import { User } from './user.interface';
+import { User as UserInterface } from './user.interface';
+import { User as UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(MagicStrings.USER) private userModel: Model<User>
+    @Inject(MagicStrings.USER) private userModel: Model<UserInterface>
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
+  create(createUserDto: CreateUserDto): Promise<UserInterface> {
     const newUser = new this.userModel(createUserDto)
     return newUser.save();
   }
 
-  findAll(): Promise<User[]> {
+  findAll(): Promise<UserInterface[]> {
     return this.userModel.find().exec();
   }
 
-  findOne(id: mongoose.Types.ObjectId): Promise<User> {
+  findOne(id: mongoose.Types.ObjectId): Promise<UserInterface> {
     return this.userModel.findOne({ _id: id })
+  }
+
+  findOneBy(user: UserEntity): Promise<UserInterface> {
+    return this.userModel.findOne(user)
   }
 
   update(id: mongoose.Types.ObjectId, updateUserDto: UpdateUserDto) {
