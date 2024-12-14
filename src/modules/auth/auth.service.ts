@@ -7,9 +7,10 @@ import { Model } from 'mongoose';
 import { SignInDTO } from './dto/signIn.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import { Token } from './entities/token.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class AuthService { 
+export class AuthService {
     constructor (
         private userService: UsersService,
         private jwtService: JwtService,
@@ -18,9 +19,14 @@ export class AuthService {
 
     async signIn(signInDTO: SignInDTO): Promise<Result<Token, UnauthorizedException>> {
         const gettedUser: User = await this.userService.findOneBy({ email: signInDTO.email });
+        
         if (gettedUser?.email!) return Err(new UnauthorizedException('This email is already in use'));
+        const salt: string = await bcrypt.genSalt()
+        
         const newUser: User = new this.userModel(signInDTO);
+        newUser.password = await bcrypt.hash(signInDTO.password, salt);
         newUser.save();
+
         return this.logIn(newUser.email, newUser.password);
     }
 
@@ -28,7 +34,9 @@ export class AuthService {
         const gettedUser: User = await this.userService.findOneBy({ email: email })
 
         if (!gettedUser) return Err(new UnauthorizedException("This email doesn't exist"));
-        if (gettedUser?.password != pass) return Err(new UnauthorizedException('Incorrect password'));
+
+        const isSamePassword: boolean = await bcrypt.compare(pass, gettedUser?.password)
+        if (!isSamePassword) return Err(new UnauthorizedException('Incorrect password'));
 
         const payload: any = { sub: gettedUser._id, email: gettedUser.email }        
         const accessToken: string = await this.jwtService.signAsync(payload)
