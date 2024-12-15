@@ -6,10 +6,6 @@ export function success(data: any): Success {
     return new Success(data);
 }
 
-/** 
- * @todo Use best practices for rusting library
- */
 export function rustingDepending(result: Result<Success, HttpException>): Success | HttpException {
-    if (result.is_err()) throw result.unwrap_err();
-    return result.unwrap()
+    return result.unwrap_or_else((err) => { throw err });
 }
