@@ -27,9 +27,9 @@ export class AuthService {
         
         const newUser: User = new this.userModel(signInDTO);
         newUser.password = await bcrypt.hash(signInDTO.password, salt);
-        newUser.save();
+        const userSaved = await newUser.save();
 
-        return this.logIn(newUser.email, newUser.password);
+        return this.logIn(userSaved.email, signInDTO.password);
     }
 
     async logIn(email: string, pass: string): Promise<Result<Success, UnauthorizedException>> {
