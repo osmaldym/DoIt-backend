@@ -4,36 +4,38 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import mongoose from 'mongoose';
 import { Routes } from 'src/config/enums/routes.enum';
+import { success } from 'src/utils/responses';
+import { Success } from 'src/utils/http/success';
 
 @Controller(Routes.tasks)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  async create(@Body() createTaskDto: CreateTaskDto): Promise<Success> {
+    return success(await this.tasksService.create(createTaskDto));
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  async findAll(): Promise<Success> {
+    return success(await this.tasksService.findAll());
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-    return this.tasksService.findOne(_id);
+    return success(await this.tasksService.findOne(_id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-    return this.tasksService.update(_id, updateTaskDto);
+    return success(await this.tasksService.update(_id, updateTaskDto));
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-    return this.tasksService.remove(_id);
+    return success(await this.tasksService.remove(_id));
   }
 }

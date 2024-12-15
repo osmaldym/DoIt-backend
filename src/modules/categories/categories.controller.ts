@@ -4,36 +4,38 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Routes } from 'src/config/enums/routes.enum';
 import mongoose from 'mongoose';
+import { success } from 'src/utils/responses';
+import { Success } from 'src/utils/http/success';
 
 @Controller(Routes.categories)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto): Promise<Success> {
+    return success(await this.categoriesService.create(createCategoryDto));
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  async findAll(): Promise<Success> {
+    return success(await this.categoriesService.findAll());
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-    return this.categoriesService.findOne(_id);
+    return success(await this.categoriesService.findOne(_id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-    return this.categoriesService.update(_id, updateCategoryDto);
+    return success(await this.categoriesService.update(_id, updateCategoryDto));
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-    return this.categoriesService.remove(_id);
+    return success(await this.categoriesService.remove(_id));
   }
 }
