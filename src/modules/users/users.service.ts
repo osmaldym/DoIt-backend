@@ -33,9 +33,6 @@ export class UsersService {
     return this.userModel.updateOne({ _id: id }, updateUserDto);
   }
 
-  /**
-   * @todo Create soft delete
-   */
   remove(id: mongoose.Types.ObjectId) {
     return this.userModel.deleteOne({ _id: id });
   }

@@ -32,9 +32,6 @@ export class TasksService {
     return this.tasksModel.updateOne({ _id: id }, updateTaskDto);
   }
 
-  /**
-   * @todo Create soft delete
-   */
   remove(id: mongoose.Types.ObjectId) {
     return this.tasksModel.deleteOne({ _id: id });
   }

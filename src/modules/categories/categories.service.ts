@@ -28,9 +28,6 @@ export class CategoriesService {
     return this.categoryModel.updateOne({ _id: id }, updateCategoryDto);
   }
 
-  /**
-   * @todo Create soft delete
-   */
   remove(id: mongoose.Types.ObjectId) {
     return this.categoryModel.deleteOne({ _id: id });
   }
