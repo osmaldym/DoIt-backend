@@ -27,6 +27,12 @@ export class TasksController {
     return success(await this.tasksService.findOne(_id));
   }
 
+  @Get('/category/:id')
+  async findAllByCategory(@Param('id') categoryId: string): Promise<Success> {
+    const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(categoryId);
+    return success(await this.tasksService.findByCategory(_id));
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
