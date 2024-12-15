@@ -5,4 +5,4 @@ export const TaskSchema = new mongoose.Schema({
     description: String,
     date: Date,
     category: mongoose.Types.ObjectId
-})
+}, { timestamps: true, })
