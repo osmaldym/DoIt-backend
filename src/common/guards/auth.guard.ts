@@ -9,6 +9,10 @@ import { Guard } from "src/config/enums/guard.enum";
 @Injectable()
 export class AuthGuard implements CanActivate {
     constructor(private jwtService: JwtService, private reflector: Reflector) {}
+
+    private throwUnauthorized(): UnauthorizedException {
+        throw new UnauthorizedException("Unauthorized");
+    }
     
     private extractTokenFromHeader(req: Request): string | undefined {
         const [type, token] = req.headers.authorization?.split(' ') ?? [];
@@ -25,7 +29,7 @@ export class AuthGuard implements CanActivate {
 
         const req = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(req);
-        if (!token) throw new UnauthorizedException();
+        if (!token) this.throwUnauthorized();
 
         const res = await catch_unwind(async () => {
             const payload = await this.jwtService.verifyAsync(token, { 
@@ -35,8 +39,7 @@ export class AuthGuard implements CanActivate {
             req['user'] = payload;
         })
 
-        if (res.is_err()) throw new UnauthorizedException();
-
+        if (res.is_err()) this.throwUnauthorized();
         return true;
     }
 }
