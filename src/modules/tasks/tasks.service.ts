@@ -20,9 +20,6 @@ export class TasksService {
     return this.tasksModel.find().exec();
   }
 
-  /**
-   * @todo Implement this in a new endpoint
-   */
   findByCategory(id: mongoose.Types.ObjectId) {
     return this.tasksModel.find({ category: id });
   }
