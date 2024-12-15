@@ -22,18 +22,21 @@ export class UsersService {
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<UserInterface> {
-    return this.userModel.findOne({ _id: id })
+    return this.userModel.findOne({ _id: id });
   }
 
   findOneBy(user: UserEntity): Promise<UserInterface> {
-    return this.userModel.findOne(user)
+    return this.userModel.findOne(user);
   }
 
   update(id: mongoose.Types.ObjectId, updateUserDto: UpdateUserDto) {
     return this.userModel.updateOne({ _id: id }, updateUserDto);
   }
 
+  /**
+   * @todo Create soft delete
+   */
   remove(id: mongoose.Types.ObjectId) {
-    return this.userModel.deleteOne({ _id: id })
+    return this.userModel.deleteOne({ _id: id });
   }
 }

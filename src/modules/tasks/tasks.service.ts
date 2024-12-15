@@ -20,15 +20,25 @@ export class TasksService {
     return this.tasksModel.find().exec();
   }
 
+  /**
+   * @todo Implement this in a new endpoint
+   */
+  findByCategory(id: mongoose.Types.ObjectId) {
+    return this.tasksModel.find({ category: id });
+  }
+
   findOne(id: mongoose.Types.ObjectId): Promise<Task> {
-    return this.tasksModel.findOne({ _id: id })
+    return this.tasksModel.findOne({ _id: id });
   }
 
   update(id: mongoose.Types.ObjectId, updateTaskDto: UpdateTaskDto) {
     return this.tasksModel.updateOne({ _id: id }, updateTaskDto);
   }
 
+  /**
+   * @todo Create soft delete
+   */
   remove(id: mongoose.Types.ObjectId) {
-    return this.tasksModel.deleteOne({ _id: id })
+    return this.tasksModel.deleteOne({ _id: id });
   }
 }
