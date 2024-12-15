@@ -8,6 +8,8 @@ import { SignInDTO } from './dto/signIn.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import { Token } from './entities/token.entity';
 import * as bcrypt from 'bcrypt';
+import { Success } from 'src/utils/http/success';
+import { success } from 'src/utils/responses';
 
 @Injectable()
 export class AuthService {
@@ -17,11 +19,11 @@ export class AuthService {
         @Inject(MagicStrings.USER) private userModel: Model<User>,
     ) {}
 
-    async signIn(signInDTO: SignInDTO): Promise<Result<Token, UnauthorizedException>> {
+    async signIn(signInDTO: SignInDTO): Promise<Result<Success, UnauthorizedException>> {
         const gettedUser: User = await this.userService.findOneBy({ email: signInDTO.email });
         
         if (gettedUser?.email!) return Err(new UnauthorizedException('This email is already in use'));
-        const salt: string = await bcrypt.genSalt()
+        const salt: string = await bcrypt.genSalt();
         
         const newUser: User = new this.userModel(signInDTO);
         newUser.password = await bcrypt.hash(signInDTO.password, salt);
@@ -30,17 +32,17 @@ export class AuthService {
         return this.logIn(newUser.email, newUser.password);
     }
 
-    async logIn(email: string, pass: string): Promise<Result<Token, UnauthorizedException>> {
-        const gettedUser: User = await this.userService.findOneBy({ email: email })
+    async logIn(email: string, pass: string): Promise<Result<Success, UnauthorizedException>> {
+        const gettedUser: User = await this.userService.findOneBy({ email: email });
 
         if (!gettedUser) return Err(new UnauthorizedException("This email doesn't exist"));
 
-        const isSamePassword: boolean = await bcrypt.compare(pass, gettedUser?.password)
+        const isSamePassword: boolean = await bcrypt.compare(pass, gettedUser?.password);
         if (!isSamePassword) return Err(new UnauthorizedException('Incorrect password'));
 
         const payload: any = { sub: gettedUser._id, email: gettedUser.email }        
         const accessToken: string = await this.jwtService.signAsync(payload)
 
-        return Ok(new Token(accessToken))
+        return Ok(success(new Token(accessToken)))
     }
 }
