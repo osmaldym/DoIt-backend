@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+// import { UpdateUserDto } from './dto/update-user.dto';
 import { Routes } from '../../config/enums/routes.enum'
 import mongoose from 'mongoose';
 import { success } from 'src/utils/responses';
@@ -27,6 +27,7 @@ export class UsersController {
     return success(await this.usersService.findOne(_id));
   }
 
+/*
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
@@ -38,4 +39,5 @@ export class UsersController {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
     return success(await this.usersService.remove(_id));
   }
+*/
 }
