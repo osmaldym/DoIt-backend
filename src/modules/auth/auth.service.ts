@@ -21,12 +21,20 @@ export class AuthService {
 
     async signIn(signInDTO: SignInDTO): Promise<Result<Success, UnauthorizedException>> {
         const gettedUser: User = await this.userService.findOneBy({ email: signInDTO.email });
-        
-        if (gettedUser?.email!) return Err(new UnauthorizedException('This email is already in use'));
+
+        if (gettedUser?.email! && !gettedUser.deleted) return Err(new UnauthorizedException('This email is already in use'));
         const salt: string = await bcrypt.genSalt();
+        const encryptedPass: string = await bcrypt.hash(signInDTO.password, salt);
         
+        if (gettedUser?.deleted){
+            gettedUser.password = encryptedPass;
+            gettedUser.deleted = false;
+            gettedUser.save()
+            return this.logIn(gettedUser.email, signInDTO.password)
+        }
+
         const newUser: User = new this.userModel(signInDTO);
-        newUser.password = await bcrypt.hash(signInDTO.password, salt);
+        newUser.password = encryptedPass;
         const userSaved = await newUser.save();
 
         return this.logIn(userSaved.email, signInDTO.password);
