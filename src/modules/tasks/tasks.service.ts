@@ -4,6 +4,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './tasks.interface';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
+import { DBCall } from 'src/utils/calls';
 
 @Injectable()
 export class TasksService {
@@ -17,22 +18,22 @@ export class TasksService {
   }
 
   findAll(): Promise<Task[]> {
-    return this.tasksModel.find().exec();
+    return DBCall.findAll(this.tasksModel);
   }
 
   findByCategory(id: mongoose.Types.ObjectId) {
-    return this.tasksModel.find({ category: id });
+    return this.tasksModel.find({ category: id, isDeleted: false });
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Task> {
-    return this.tasksModel.findOne({ _id: id });
+    return DBCall.findOne(this.tasksModel, id);
   }
 
   update(id: mongoose.Types.ObjectId, updateTaskDto: UpdateTaskDto) {
-    return this.tasksModel.updateOne({ _id: id }, updateTaskDto);
+    return DBCall.updateOne(this.tasksModel, id, updateTaskDto);
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return this.tasksModel.deleteOne({ _id: id });
+    return DBCall.softRemoveOne(this.tasksModel, id);
   }
 }

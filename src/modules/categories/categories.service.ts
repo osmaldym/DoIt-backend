@@ -4,6 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { Category } from './categories.interface';
+import { DBCall } from 'src/utils/calls';
 
 @Injectable()
 export class CategoriesService {
@@ -17,18 +18,18 @@ export class CategoriesService {
   }
 
   findAll(): Promise<Category[]> {
-    return this.categoryModel.find().exec();
+    return DBCall.findAll(this.categoryModel);
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Category> {
-    return this.categoryModel.findOne({ _id: id });
+    return DBCall.findOne(this.categoryModel, id);
   }
 
   update(id: mongoose.Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryModel.updateOne({ _id: id }, updateCategoryDto);
+    return DBCall.updateOne(this.categoryModel, id, updateCategoryDto);
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return this.categoryModel.deleteOne({ _id: id });
+    return DBCall.softRemoveOne(this.categoryModel, id)
   }
 }

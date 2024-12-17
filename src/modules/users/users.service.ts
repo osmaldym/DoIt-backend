@@ -5,6 +5,7 @@ import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { User as UserInterface } from './user.interface';
 import { User as UserEntity } from './entities/user.entity';
+import { DBCall } from 'src/utils/calls';
 
 @Injectable()
 export class UsersService {
@@ -13,16 +14,16 @@ export class UsersService {
   ) {}
 
   create(createUserDto: CreateUserDto): Promise<UserInterface> {
-    const newUser = new this.userModel(createUserDto)
+    const newUser = new this.userModel(createUserDto);
     return newUser.save();
   }
 
   findAll(): Promise<UserInterface[]> {
-    return this.userModel.find().exec();
+    return DBCall.findAll(this.userModel);
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<UserInterface> {
-    return this.userModel.findOne({ _id: id });
+    return DBCall.findOne(this.userModel, id);
   }
 
   findOneBy(user: UserEntity): Promise<UserInterface> {
@@ -30,10 +31,10 @@ export class UsersService {
   }
 
   update(id: mongoose.Types.ObjectId, updateUserDto: UpdateUserDto) {
-    return this.userModel.updateOne({ _id: id }, updateUserDto);
+    return DBCall.updateOne(this.userModel, id, updateUserDto)
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return this.userModel.deleteOne({ _id: id });
+    return DBCall.softRemoveOne(this.userModel, id);
   }
 }
