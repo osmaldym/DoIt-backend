@@ -6,5 +6,6 @@ export const TaskSchema = new mongoose.Schema({
     description: String,
     date: Date,
     category: mongoose.Types.ObjectId,
+    user_id: mongoose.Types.ObjectId,
     ...SoftDelete
 }, { timestamps: true, })
