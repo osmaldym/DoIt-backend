@@ -17,5 +17,6 @@ export function deleteAts(el: mongoose.Document) {
     delete data.createdAt;
     delete data.updatedAt;
     delete data.deleted;
+    delete data.password;
     return data;
 }
