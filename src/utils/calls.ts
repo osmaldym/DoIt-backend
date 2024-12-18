@@ -2,14 +2,18 @@ import mongoose, { Model } from "mongoose"
 import { deleteAts } from "./responses";
 
 export class DBCall {
-    static async findOne(model: Model<any>, id: mongoose.Types.ObjectId) {
-        let data = await model.findOne({ _id: id, deleted: false });
+    static async findOne(model: Model<any>, id: mongoose.Types.ObjectId, authUser: any = undefined) {
+        let byUserOpt = {}
+        if (authUser) byUserOpt['user_id'] = authUser.getUser().sub
+        let data = await model.findOne({ _id: id, deleted: false, ...byUserOpt });
         data = deleteAts(data);
         return data;
     }
 
-    static async findAll(model: Model<any>) {
-        let allData = await model.find({ deleted: false }).exec();
+    static async findAll(model: Model<any>, authUser: any = undefined) {
+        let byUserOpt = {}
+        if (authUser) byUserOpt['user_id'] = authUser.sub
+        let allData = await model.find({ deleted: false, ...byUserOpt }).exec();
         allData = allData.map(deleteAts);
         return allData;
     }
