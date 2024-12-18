@@ -1,29 +1,23 @@
 import mongoose, { Model } from "mongoose"
-import { deleteAts } from "./responses";
+import { preventsToShow } from "src/config/prevents";
 
 export class DBCall {
     static async findOne(model: Model<any>, id: mongoose.Types.ObjectId, authUser: any = undefined) {
         let byUserOpt = {};
         if (authUser) byUserOpt['user_id'] = authUser.getUser().sub;
-        let data = await model.findOne({ _id: id, deleted: false, ...byUserOpt });
-        data = deleteAts(data);
-        return data;
+        return await model.findOne({ _id: id, deleted: false, ...byUserOpt }).select(preventsToShow);
     }
 
     static async findAll(model: Model<any>, authUser: any = undefined) {
         let byUserOpt = {}
         if (authUser) byUserOpt['user_id'] = authUser.sub;
-        let allData = await model.find({ deleted: false, ...byUserOpt }).exec();
-        allData = allData.map(deleteAts);
-        return allData;
+        return await model.find({ deleted: false, ...byUserOpt }).select(preventsToShow).exec();
     }
 
     static async findAllBy(model: Model<any>, filter: any, authUser: any = undefined) {
         let byUserOpt = {};
         if (authUser) byUserOpt['user_id'] = authUser.sub;
-        let allData = await model.find({ deleted: false, ...filter, ...byUserOpt }).exec();
-        allData = allData.map(deleteAts);
-        return allData;
+        return await model.find({ deleted: false, ...filter, ...byUserOpt }).select(preventsToShow).exec();
     }
 
     static updateOne(model: Model<any>, id: mongoose.Types.ObjectId, updateData: any){
