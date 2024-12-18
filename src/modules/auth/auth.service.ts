@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, Scope, Type, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { Err, Ok, Result } from 'rusting-js/enums'
 import { User } from '../users/user.interface';
@@ -12,6 +12,7 @@ import { Success } from 'src/utils/http/success';
 import { success } from 'src/utils/responses';
 import { REQUEST } from '@nestjs/core';
 import { User as UserEntity } from '../users/entities/user.entity'
+import { AuthUser } from './entities/user.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -21,6 +22,8 @@ export class AuthService {
         @Inject(REQUEST) private readonly req: Request,
         @Inject(MagicStrings.USER) private userModel: Model<User>,
     ) {}
+
+    getUser(): AuthUser { return this.req['user']; }
 
     async signIn(signInDTO: SignInDTO): Promise<Result<Success, UnauthorizedException>> {
         const gettedUser: User = await this.userService.findOneBy({ email: signInDTO.email });
@@ -51,25 +54,23 @@ export class AuthService {
         const isSamePassword: boolean = await bcrypt.compare(pass, gettedUser?.password);
         if (!isSamePassword) return Err(new UnauthorizedException('Incorrect password'));
 
-        const payload: any = { sub: gettedUser._id, email: gettedUser.email }        
+        const payload: AuthUser = { sub: gettedUser._id, email: gettedUser.email } as AuthUser        
         const accessToken: string = await this.jwtService.signAsync(payload)
 
         return Ok(success(new Token(accessToken)))
     }
 
     profile() {
-        const user: UserEntity = { email: this.req['user'].email }
+        const user: UserEntity = { email: this.getUser().email }
         return user;
     }
 
     async editPassword(newPassword: string) {
-        const userData = this.req['user'];
         const encryptedPass: string = await bcrypt.hash(newPassword, await bcrypt.genSalt());
-        return this.userService.update(userData.sub, { password: encryptedPass });
+        return this.userService.update(this.getUser().sub, { password: encryptedPass });
     }
 
     async deleteAccount() {
-        const userData = this.req['user'];
-        return this.userService.remove(userData.sub)
+        return this.userService.remove(this.getUser().sub)
     }
 }
