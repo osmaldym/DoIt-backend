@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Patch, Post } from '@nestjs/common';
 import { Routes } from 'src/config/enums/routes.enum';
 import { AuthService } from './auth.service';
 import { SignInDTO } from './dto/signIn.dto';
@@ -31,8 +31,13 @@ export class AuthController {
         return success(this.authService.profile());
     }
 
-    @Patch('profile/edit-password')
+    @Patch('profile/edit/password')
     async editPassword(@Body() passwordDto: PasswordDTO): Promise<Success | HttpException> {
         return success(await this.authService.editPassword(passwordDto.password));
+    }
+
+    @Delete('profile/delete')
+    async delete(): Promise<Success | HttpException> {
+        return success(await this.authService.deleteAccount());
     }
 }

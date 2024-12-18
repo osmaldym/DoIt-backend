@@ -12,7 +12,6 @@ import { Success } from 'src/utils/http/success';
 import { success } from 'src/utils/responses';
 import { REQUEST } from '@nestjs/core';
 import { User as UserEntity } from '../users/entities/user.entity'
-import { DBCall } from 'src/utils/calls';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -63,9 +62,14 @@ export class AuthService {
         return user;
     }
 
-    async editPassword(newPassword: string){
+    async editPassword(newPassword: string) {
         const userData = this.req['user'];
         const encryptedPass: string = await bcrypt.hash(newPassword, await bcrypt.genSalt());
-        return DBCall.updateOne(this.userModel, userData.sub, { password: encryptedPass })
+        return this.userService.update(userData.sub, { password: encryptedPass });
+    }
+
+    async deleteAccount() {
+        const userData = this.req['user'];
+        return this.userService.remove(userData.sub)
     }
 }
