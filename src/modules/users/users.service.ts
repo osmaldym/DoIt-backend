@@ -20,11 +20,11 @@ export class UsersService {
   }
 
   findAll(): Promise<UserInterface[]> {
-    return this.dbCall.findAll({ idKey: '_id' });
+    return this.dbCall.findAll({ idKey: '_id', excludes: "password" });
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<UserInterface> {
-    return this.dbCall.findOne(id, { idKey: '_id' });
+    return this.dbCall.findOne(id, { idKey: '_id', excludes: "password" });
   }
 
   findOneBy(user: UserEntity): Promise<UserInterface> {

@@ -20,15 +20,15 @@ export class TasksService {
   }
 
   findAll(): Promise<Task[]> {
-    return this.dbCall.findAll();
+    return this.dbCall.findAll({ excludes: "user_id" });
   }
 
   findByCategory(id: mongoose.Types.ObjectId) {
-    return this.dbCall.findAllBy({ category: id });
+    return this.dbCall.findAllBy({ category: id }, { excludes: "user_id" });
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Task> {
-    return this.dbCall.findOne(id);
+    return this.dbCall.findOne(id, { excludes: "user_id" });
   }
 
   update(id: mongoose.Types.ObjectId, updateTaskDto: UpdateTaskDto) {
