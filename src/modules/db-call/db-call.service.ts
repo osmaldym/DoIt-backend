@@ -2,6 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import mongoose, { Document, Model } from "mongoose"
 import { preventsToShow } from "src/config/prevents";
 import { REQUEST } from '@nestjs/core';
+import { Options } from './db-call.types';
 
 /**
  * After call in constructor, set the mongo model like:
@@ -21,21 +22,21 @@ export class DbCallService {
         return this.req['user'].sub;
     }
 
-    async findOne(id: mongoose.Types.ObjectId, byAuth: boolean = true) {
+    async findOne(id: mongoose.Types.ObjectId, options: Options = {byAuth: true, idKey: "user_id"}) {
         let byUserOpt = {};
-        if (byAuth) byUserOpt['user_id'] = this.getUserId();
+        if (options.byAuth) byUserOpt[options.idKey] = this.getUserId();
         return await this.model.findOne({ _id: id, deleted: false, ...byUserOpt }).select(preventsToShow);
     }
 
-    async findAll(byAuth: boolean = true) {
+    async findAll(options: Options = {byAuth: true, idKey: "user_id"}) {
         let byUserOpt = {}
-        if (byAuth) byUserOpt['user_id'] = this.getUserId();
+        if (options.byAuth) byUserOpt[options.idKey] = this.getUserId();
         return await this.model.find({ deleted: false, ...byUserOpt }).select(preventsToShow).exec();
     }
 
-    async findAllBy(filter: any, byAuth: boolean = true) {
+    async findAllBy(filter: any, options: Options = {byAuth: true, idKey: "user_id"}) {
         let byUserOpt = {};
-        if (byAuth) byUserOpt['user_id'] = this.getUserId();
+        if (options.byAuth) byUserOpt[options.idKey] = this.getUserId();
         return await this.model.find({ deleted: false, ...filter, ...byUserOpt }).select(preventsToShow).exec();
     }
 
