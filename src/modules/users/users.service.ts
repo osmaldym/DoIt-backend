@@ -1,15 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { User as UserInterface } from './user.interface';
 import { User as UserEntity } from './entities/user.entity';
-import { DBCall } from 'src/utils/calls';
+import { DbCallService } from '../db-call/db-call.service';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private dbCall: DbCallService,
     @Inject(MagicStrings.USER) private userModel: Model<UserInterface>
   ) {}
 
@@ -19,11 +20,11 @@ export class UsersService {
   }
 
   findAll(): Promise<UserInterface[]> {
-    return DBCall.findAll(this.userModel);
+    return this.dbCall.findAll(this.userModel);
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<UserInterface> {
-    return DBCall.findOne(this.userModel, id);
+    return this.dbCall.findOne(this.userModel, id);
   }
 
   findOneBy(user: UserEntity): Promise<UserInterface> {
@@ -31,10 +32,10 @@ export class UsersService {
   }
 
   update(id: mongoose.Types.ObjectId, updateUserDto: UpdateUserDto) {
-    return DBCall.updateOne(this.userModel, id, updateUserDto)
+    return this.dbCall.updateOne(this.userModel, id, updateUserDto)
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return DBCall.softRemoveOne(this.userModel, id);
+    return this.dbCall.softRemoveOne(this.userModel, id);
   }
 }

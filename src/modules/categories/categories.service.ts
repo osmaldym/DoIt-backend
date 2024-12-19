@@ -4,35 +4,34 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { Category } from './categories.interface';
-import { DBCall } from 'src/utils/calls';
-import { AuthService } from '../auth/auth.service';
+import { DbCallService } from '../db-call/db-call.service';
 
 @Injectable()
 export class CategoriesService {
   constructor(
-    private authService: AuthService,
+    private dbCall: DbCallService,
     @Inject(MagicStrings.CATEGORY) private categoryModel: Model<Category>
   ){}
 
   create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const newCategory = new this.categoryModel(createCategoryDto);
-    newCategory.user_id = this.authService.getUser().sub;
+    newCategory.user_id = this.dbCall.getUserId();
     return newCategory.save();
   }
 
   findAll(): Promise<Category[]> {
-    return DBCall.findAll(this.categoryModel, this.authService.getUser());
+    return this.dbCall.findAll(this.categoryModel);
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Category> {
-    return DBCall.findOne(this.categoryModel, id, this.authService.getUser());
+    return this.dbCall.findOne(this.categoryModel, id);
   }
 
   update(id: mongoose.Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
-    return DBCall.updateOne(this.categoryModel, id, updateCategoryDto);
+    return this.dbCall.updateOne(this.categoryModel, id, updateCategoryDto);
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return DBCall.softRemoveOne(this.categoryModel, id)
+    return this.dbCall.softRemoveOne(this.categoryModel, id)
   }
 }
