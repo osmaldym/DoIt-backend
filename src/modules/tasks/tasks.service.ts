@@ -11,7 +11,7 @@ export class TasksService {
   constructor(
     private dbCall: DbCallService,
     @Inject(MagicStrings.TASK) private tasksModel: Model<Task>
-  ) {}
+  ) { dbCall.model = tasksModel; }
 
   create(createTaskDto: CreateTaskDto) {
     const newTask = new this.tasksModel(createTaskDto);
@@ -20,22 +20,22 @@ export class TasksService {
   }
 
   findAll(): Promise<Task[]> {
-    return this.dbCall.findAll(this.tasksModel);
+    return this.dbCall.findAll();
   }
 
   findByCategory(id: mongoose.Types.ObjectId) {
-    return this.dbCall.findAllBy(this.tasksModel, { category: id });
+    return this.dbCall.findAllBy({ category: id });
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Task> {
-    return this.dbCall.findOne(this.tasksModel, id);
+    return this.dbCall.findOne(id);
   }
 
   update(id: mongoose.Types.ObjectId, updateTaskDto: UpdateTaskDto) {
-    return this.dbCall.updateOne(this.tasksModel, id, updateTaskDto);
+    return this.dbCall.updateOne(id, updateTaskDto);
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return this.dbCall.softRemoveOne(this.tasksModel, id);
+    return this.dbCall.softRemoveOne(id);
   }
 }

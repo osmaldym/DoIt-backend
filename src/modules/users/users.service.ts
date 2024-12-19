@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     private dbCall: DbCallService,
     @Inject(MagicStrings.USER) private userModel: Model<UserInterface>
-  ) {}
+  ) { dbCall.model = userModel; }
 
   create(createUserDto: CreateUserDto): Promise<UserInterface> {
     const newUser = new this.userModel(createUserDto);
@@ -20,11 +20,11 @@ export class UsersService {
   }
 
   findAll(): Promise<UserInterface[]> {
-    return this.dbCall.findAll(this.userModel);
+    return this.dbCall.findAll();
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<UserInterface> {
-    return this.dbCall.findOne(this.userModel, id);
+    return this.dbCall.findOne(id);
   }
 
   findOneBy(user: UserEntity): Promise<UserInterface> {
@@ -32,10 +32,10 @@ export class UsersService {
   }
 
   update(id: mongoose.Types.ObjectId, updateUserDto: UpdateUserDto) {
-    return this.dbCall.updateOne(this.userModel, id, updateUserDto)
+    return this.dbCall.updateOne(id, updateUserDto)
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return this.dbCall.softRemoveOne(this.userModel, id);
+    return this.dbCall.softRemoveOne(id);
   }
 }

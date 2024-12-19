@@ -11,7 +11,7 @@ export class CategoriesService {
   constructor(
     private dbCall: DbCallService,
     @Inject(MagicStrings.CATEGORY) private categoryModel: Model<Category>
-  ){}
+  ){ dbCall.model = categoryModel; }
 
   create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const newCategory = new this.categoryModel(createCategoryDto);
@@ -20,18 +20,18 @@ export class CategoriesService {
   }
 
   findAll(): Promise<Category[]> {
-    return this.dbCall.findAll(this.categoryModel);
+    return this.dbCall.findAll();
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Category> {
-    return this.dbCall.findOne(this.categoryModel, id);
+    return this.dbCall.findOne(id);
   }
 
   update(id: mongoose.Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
-    return this.dbCall.updateOne(this.categoryModel, id, updateCategoryDto);
+    return this.dbCall.updateOne(id, updateCategoryDto);
   }
 
   remove(id: mongoose.Types.ObjectId) {
-    return this.dbCall.softRemoveOne(this.categoryModel, id)
+    return this.dbCall.softRemoveOne(id);
   }
 }
