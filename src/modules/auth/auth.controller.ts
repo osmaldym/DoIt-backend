@@ -31,12 +31,12 @@ export class AuthController {
         return success(this.authService.profile());
     }
 
-    @Patch('profile/edit/password')
+    @Patch('profile/password')
     async editPassword(@Body() passwordDto: PasswordDTO): Promise<Success | HttpException> {
         return success(await this.authService.editPassword(passwordDto.password));
     }
 
-    @Delete('profile/delete')
+    @Delete('profile')
     async delete(): Promise<Success | HttpException> {
         return success(await this.authService.deleteAccount());
     }
