@@ -12,6 +12,9 @@ export class CreateTaskDto {
     
     @IsDateString()
     readonly date: string;
+
+    @IsOptional()
+    readonly completed: boolean;
     
     @IsMongoId()
     @IsOptional()
