@@ -19,8 +19,8 @@ export class TasksService {
     return newTask.save();
   }
 
-  findAll(): Promise<Task[]> {
-    return this.dbCall.findAll({ excludes: "user_id" });
+  findAll(data: object): Promise<Task[]> {
+    return this.dbCall.findAll({ filter: data, excludes: "user_id" });
   }
 
   findByCategory(id: mongoose.Types.ObjectId) {

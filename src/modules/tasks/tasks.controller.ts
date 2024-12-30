@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import { Routes } from 'src/config/enums/routes.enum';
 import { success } from 'src/utils/responses';
 import { Success } from 'src/utils/http/success';
+import { TaskDto } from './dto/task.dto';
 
 @Controller(Routes.tasks)
 export class TasksController {
@@ -17,8 +18,8 @@ export class TasksController {
   }
 
   @Get()
-  async findAll(): Promise<Success> {
-    return success(await this.tasksService.findAll());
+  async findAll(@Query() params: TaskDto): Promise<Success> {
+    return success(await this.tasksService.findAll(params));
   }
 
   @Get(':id')
