@@ -20,7 +20,7 @@ export class CategoriesService {
   }
 
   findAll(): Promise<Category[]> {
-    return this.dbCall.findAll({ excludes: "user_id" });
+    return this.dbCall.findAll({ existIdKey: false, excludes: "user_id" });
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Category> {
