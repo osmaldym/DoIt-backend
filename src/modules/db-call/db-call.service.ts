@@ -23,25 +23,28 @@ export class DbCallService {
         return this.req['user'].sub;
     }
 
-    async findOne(id: mongoose.Types.ObjectId, options: Options = {byAuth: true, idKey: "user_id"}) {
+    async findOne(id: mongoose.Types.ObjectId, options?: Options) {
+        options = {byAuth: true, idKey: "user_id", ...options}
         let byUserOpt = {};
         if (options.byAuth) byUserOpt[options.idKey] = this.getUserId();
         return await this.model.findOne({ _id: id, deleted: false, ...byUserOpt }).select(excluded(exclude, options.excludes));
     }
 
-    async findAll(options: Options = {byAuth: true, idKey: "user_id", filter: {}}) {
-        let byUserOpt = {}
+    async findAll(options?: Options) {
+        options = {byAuth: true, idKey: "user_id", ...options}
+        let byUserOpt = {};
         if (options.byAuth) byUserOpt[options.idKey] = this.getUserId();
         return await this.model.find({ deleted: false, ...byUserOpt, ...options.filter }).select(excluded(exclude, options.excludes));
     }
 
-    async findAllBy(filter: object, options: Options = {byAuth: true, idKey: "user_id"}) {
+    async findAllBy(filter: object, options?: Options) {
+        options = {byAuth: true, idKey: "user_id", ...options}
         let byUserOpt = {};
         if (options.byAuth) byUserOpt[options.idKey] = this.getUserId();
         return await this.model.find({ deleted: false, ...filter, ...byUserOpt }).select(excluded(exclude, options.excludes));
     }
 
-    updateOne(id: mongoose.Types.ObjectId, updateData: object){
+    updateOne(id: mongoose.Types.ObjectId, updateData: object) {
         return this.model.updateOne({ _id: id, deleted: false }, updateData);
     }
 
