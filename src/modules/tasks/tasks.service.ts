@@ -5,6 +5,7 @@ import { Task } from './tasks.interface';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { DbCallService } from '../db-call/db-call.service';
+import { TaskDto } from './dto/task.dto';
 
 @Injectable()
 export class TasksService {
@@ -19,8 +20,22 @@ export class TasksService {
     return newTask.save();
   }
 
-  findAll(data: object): Promise<Task[]> {
-    return this.dbCall.findAll({ filter: data, excludes: "user_id" });
+  findAll(data: TaskDto): Promise<Task[]> {
+    let dateFilter = {};
+
+    if (data?.date){
+      const dayToFilter = data.date.split('T')[0];
+      const getted = new Date(dayToFilter);
+
+      const tomorrow = new Date(dayToFilter);
+      tomorrow.setDate(getted.getDate() + 1);
+
+      dateFilter = { date: { $gte: getted, $lte: tomorrow } }
+    }
+
+    const final: object = {...data, ...dateFilter};
+
+    return this.dbCall.findAll({ filter: final, excludes: "user_id" });
   }
 
   findByCategory(id: mongoose.Types.ObjectId) {
