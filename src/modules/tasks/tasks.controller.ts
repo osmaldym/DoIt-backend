@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -38,6 +38,17 @@ export class TasksController {
   async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
     return success(await this.tasksService.update(_id, updateTaskDto));
+  }
+
+  @Put()
+  async putNoId(@Body() createTaskDto: CreateTaskDto): Promise<Success> {
+    return success(await this.tasksService.put(createTaskDto));
+  }
+
+  @Put(':id')
+  async put(@Param('id') id: string, @Body() createTaskDto: CreateTaskDto): Promise<Success> {
+    const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
+    return success(await this.tasksService.put(createTaskDto, _id));
   }
 
   @Delete(':id')

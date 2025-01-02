@@ -50,6 +50,10 @@ export class TasksService {
     return this.dbCall.updateOne(id, updateTaskDto);
   }
 
+  put(createTaskDto: CreateTaskDto, id?: mongoose.Types.ObjectId) {
+    return this.dbCall.put(createTaskDto, id);
+  }
+
   remove(id: mongoose.Types.ObjectId) {
     return this.dbCall.softRemoveOne(id);
   }

@@ -48,6 +48,17 @@ export class DbCallService {
         return this.model.updateOne({ _id: id, deleted: false }, updateData);
     }
 
+    put(data: object, id?: mongoose.Types.ObjectId) {
+        const finalData = {
+            ...data,
+            "user_id": this.getUserId(),
+        }
+
+        if (!id) id = new mongoose.mongo.ObjectId();
+        
+        return this.model.findByIdAndUpdate(id, finalData, { upsert: true, new: true, setDefaultsOnInsert: true });
+    }
+
     async softRemoveOne(id: mongoose.Types.ObjectId) {
         const updatedRes = await this.model.updateOne({ _id: id, deleted: false }, { deleted: true, deletedAt: new Date() });
         const res: mongoose.mongo.DeleteResult = {
