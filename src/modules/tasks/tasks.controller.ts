@@ -7,6 +7,7 @@ import { Routes } from 'src/config/enums/routes.enum';
 import { success } from 'src/utils/responses';
 import { Success } from 'src/utils/http/success';
 import { TaskDto } from './dto/task.dto';
+import { Task } from './entities/task.entity';
 
 @Controller(Routes.tasks)
 export class TasksController {
@@ -19,7 +20,20 @@ export class TasksController {
 
   @Get()
   async findAll(@Query() params: TaskDto): Promise<Success> {
-    return success(await this.tasksService.findAll(params));
+    let dateFilter = {};
+
+    if (params?.date){
+      const dayToFilter = params.date.split('T')[0];
+      const getted = new Date(dayToFilter);
+
+      const tomorrow = new Date(dayToFilter);
+      tomorrow.setDate(getted.getDate() + 1);
+
+      dateFilter = { date: { $gte: getted, $lte: tomorrow } }
+    }
+
+    const final: object = {...params, ...dateFilter};
+    return success(await this.tasksService.findAll(final));
   }
 
   @Get(':id')
