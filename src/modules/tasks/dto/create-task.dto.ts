@@ -14,7 +14,7 @@ export class CreateTaskDto {
     readonly date: string;
 
     @IsOptional()
-    readonly completed: boolean;
+    readonly completed: boolean = false;
     
     @IsMongoId()
     @IsOptional()
