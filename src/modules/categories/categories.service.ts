@@ -16,6 +16,7 @@ export class CategoriesService {
   create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const newCategory = new this.categoryModel(createCategoryDto);
     newCategory.user_id = this.dbCall.getUserId();
+    newCategory.by_user = true;
     return newCategory.save();
   }
 
