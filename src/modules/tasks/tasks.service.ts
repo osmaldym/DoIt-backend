@@ -51,7 +51,8 @@ export class TasksService {
   }
 
   put(createTaskDto: CreateTaskDto, id?: mongoose.Types.ObjectId) {
-    return this.dbCall.put(createTaskDto, id);
+    const convertedData = {...createTaskDto, categories: createTaskDto.categories.map(_id => new mongoose.Types.ObjectId(_id)) } 
+    return this.dbCall.put(convertedData, id);
   }
 
   remove(id: mongoose.Types.ObjectId) {

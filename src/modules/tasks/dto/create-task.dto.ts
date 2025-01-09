@@ -16,7 +16,7 @@ export class CreateTaskDto {
     @IsOptional()
     readonly completed: boolean;
     
-    @IsMongoId()
+    @IsMongoId({ each: true })
     @IsOptional()
-    readonly category: string;
+    readonly categories: string[];
 }

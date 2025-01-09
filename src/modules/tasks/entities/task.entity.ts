@@ -5,5 +5,5 @@ export class Task {
     title?: string;
     description?: string;
     date?: Date | object;
-    category?: mongoose.Types.ObjectId | string
+    categories?: mongoose.Types.ObjectId[] | string[]
 }
