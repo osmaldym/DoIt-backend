@@ -4,6 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { Category } from './categories.interface';
+import { Category as CategoryEntity } from './entities/category.entity';
 import { DbCallService } from '../db-call/db-call.service';
 
 @Injectable()
@@ -30,6 +31,12 @@ export class CategoriesService {
 
   update(id: mongoose.Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
     return this.dbCall.updateOne(id, updateCategoryDto);
+  }
+
+  put(createTaskDto: CreateCategoryDto, id?: mongoose.Types.ObjectId) {
+    const finalData: CategoryEntity = createTaskDto as CategoryEntity;
+    if (!id) finalData.by_user = true;
+    return this.dbCall.put(finalData, id);
   }
 
   remove(id: mongoose.Types.ObjectId) {

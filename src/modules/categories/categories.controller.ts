@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -25,6 +25,17 @@ export class CategoriesController {
   async findOne(@Param('id') id: string): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
     return success(await this.categoriesService.findOne(_id));
+  }
+
+  @Put()
+  async putNoId(@Body() createTaskDto: CreateCategoryDto): Promise<Success> {
+    return success(await this.categoriesService.put(createTaskDto));
+  }
+
+  @Put(':id')
+  async put(@Param('id') id: string, @Body() createTaskDto: CreateCategoryDto): Promise<Success> {
+    const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
+    return success(await this.categoriesService.put(createTaskDto, _id));
   }
 
   @Patch(':id')
