@@ -25,22 +25,31 @@ export class DbCallService {
 
     async findOne(id: mongoose.Types.ObjectId, options?: Options) {
         options = {byAuth: true, existIdKey: true, idKey: "user_id", ...options}
-        let byUserOpt = {$or: []};
-        if (options.byAuth) byUserOpt.$or = [{[options.idKey]: { $exists: options.existIdKey }}, {[options.idKey]: this.getUserId()}];
+        let byUserOpt = {};
+        if (options.byAuth) {
+            const data = [{[options.idKey]: { $exists: options.existIdKey }}, {[options.idKey]: this.getUserId()}]
+            byUserOpt = options.existIdKey ? {$and: data} : {$or: data}
+        }
         return await this.model.findOne({ _id: id, deleted: false, ...byUserOpt }).select(excluded(exclude, options.excludes));
     }
 
     async findAll(options?: Options) {
         options = {byAuth: true, existIdKey: true, idKey: "user_id", ...options}
-        let byUserOpt = {$or: []};
-        if (options.byAuth) byUserOpt.$or = [{[options.idKey]: { $exists: options.existIdKey }}, {[options.idKey]: this.getUserId()}];
+        let byUserOpt = {};
+        if (options.byAuth) {
+            const data = [{[options.idKey]: { $exists: options.existIdKey }}, {[options.idKey]: this.getUserId()}]
+            byUserOpt = options.existIdKey ? {$and: data} : {$or: data}
+        }
         return await this.model.find({ deleted: false, ...byUserOpt, ...options.filter }).select(excluded(exclude, options.excludes));
     }
 
     async findAllBy(filter: object, options?: Options) {
         options = {byAuth: true, existIdKey: true, idKey: "user_id", ...options}
-        let byUserOpt = {$or: []};
-        if (options.byAuth) byUserOpt.$or = [{[options.idKey]: { $exists: options.existIdKey }}, {[options.idKey]: this.getUserId()}];
+        let byUserOpt = {};
+        if (options.byAuth) {
+            const data = [{[options.idKey]: { $exists: options.existIdKey }}, {[options.idKey]: this.getUserId()}]
+            byUserOpt = options.existIdKey ? {$and: data} : {$or: data}
+        }
         return await this.model.find({ deleted: false, ...filter, ...byUserOpt }).select(excluded(exclude, options.excludes));
     }
 
