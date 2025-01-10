@@ -22,16 +22,17 @@ export class TasksController {
     return success(await this.tasksService.findAll(params));
   }
 
+  @Get('search/')
+  async search(
+    @Query() filter: UpdateTaskDto, 
+    ): Promise<Success> {
+    return success(await this.tasksService.findAllBy(filter));
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Success> {
     const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
     return success(await this.tasksService.findOne(_id));
-  }
-
-  @Get('/category/:id')
-  async findAllByCategory(@Param('id') categoryId: string): Promise<Success> {
-    const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(categoryId);
-    return success(await this.tasksService.findByCategory(_id));
   }
 
   @Patch(':id')

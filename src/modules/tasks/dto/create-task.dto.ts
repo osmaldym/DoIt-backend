@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer";
 import { IsDateString, IsMongoId, IsNotEmpty, IsOptional, MaxLength } from "class-validator";
 
 const STR_MAX_LEN: number = 5000;
@@ -18,5 +19,6 @@ export class CreateTaskDto {
     
     @IsMongoId({ each: true })
     @IsOptional()
+    @Transform(({ value }) => Array.isArray(value) ? value : value.split(','), { toClassOnly: true })
     readonly categories: string[];
 }

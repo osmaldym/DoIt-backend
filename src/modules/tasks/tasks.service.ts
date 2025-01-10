@@ -6,6 +6,7 @@ import { MagicStrings } from 'src/config/enums/dbmodels.enum';
 import mongoose, { Model } from 'mongoose';
 import { DbCallService } from '../db-call/db-call.service';
 import { TaskDto } from './dto/task.dto';
+import { toMongoIds } from 'src/utils';
 
 @Injectable()
 export class TasksService {
@@ -38,8 +39,9 @@ export class TasksService {
     return this.dbCall.findAll({ filter: final, excludes: "user_id" });
   }
 
-  findByCategory(id: mongoose.Types.ObjectId) {
-    return this.dbCall.findAllBy({ category: id }, { excludes: "user_id" });
+  async findAllBy(filter: UpdateTaskDto) {
+    const orCategories = {...filter, categories: { $in: toMongoIds(filter.categories) } };
+    return this.dbCall.findAllBy(orCategories, { excludes: "user_id" });
   }
 
   findOne(id: mongoose.Types.ObjectId): Promise<Task> {
@@ -51,7 +53,7 @@ export class TasksService {
   }
 
   put(createTaskDto: CreateTaskDto, id?: mongoose.Types.ObjectId) {
-    const convertedData = {...createTaskDto, categories: createTaskDto.categories.map(_id => new mongoose.Types.ObjectId(_id)) } 
+    const convertedData = {...createTaskDto, categories: toMongoIds(createTaskDto.categories) } 
     return this.dbCall.put(convertedData, id);
   }
 
