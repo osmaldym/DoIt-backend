@@ -54,7 +54,7 @@ export class DbCallService {
     }
 
     updateOne(id: mongoose.Types.ObjectId, updateData: object) {
-        return this.model.updateOne({ _id: id, deleted: false }, updateData);
+        return this.model.findOneAndUpdate({ _id: id, deleted: false }, updateData);
     }
 
     put(data: object, id?: mongoose.Types.ObjectId) {
